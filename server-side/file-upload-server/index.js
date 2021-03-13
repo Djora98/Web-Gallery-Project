@@ -1,0 +1,42 @@
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const helpers = require('./helpers');
+const app = express();
+const port = 3000;
+
+app.use(express.json());
+app.use(express.static(__dirname + '/public'));
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+app.post('/api/upload', (req, res) => {
+    let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('picture');
+
+    upload(req, res, function(err){
+        if(req.fileValidationError){
+            return res.send(req.fileValidationError);
+        }
+        else if (!req.file){
+            return res.send('Please select an image to upload');
+        }
+        else if(err instanceof multer.MulterError){
+            return res.send(err);
+        }
+        else if(err){
+            return res.send(err);
+        }
+
+        res.send({ message: 'Image uploaded successfully!'});
+    });
+});
+
+app.listen(port, () => console.log(`App listening on port ${port}...`));

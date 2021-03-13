@@ -62,7 +62,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "file-upload:build"
+            "browserTarget": "file-upload:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
