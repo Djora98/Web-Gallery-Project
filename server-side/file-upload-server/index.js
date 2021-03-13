@@ -1,3 +1,4 @@
+const config = require('config');
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -9,8 +10,9 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
 const storage = multer.diskStorage({
+    
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, config.get('upload_folder_path'));
     },
 
     filename: (req, file, cb) => {
@@ -18,7 +20,7 @@ const storage = multer.diskStorage({
     }
 });
 
-app.post('/api/upload', (req, res) => {
+app.post('/api/uploads', (req, res) => {
     let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('picture');
 
     upload(req, res, function(err){
@@ -37,6 +39,10 @@ app.post('/api/upload', (req, res) => {
 
         res.send({ message: 'Image uploaded successfully!'});
     });
+});
+
+app.get('/api/uploads', (req, res) => {
+
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}...`));

@@ -28,7 +28,7 @@ export class AppComponent {
   onUpload(){
     const fd = new FormData();
     fd.append('picture', this.selectedFile, this.selectedFile.name);
-    this.http.post('http://localhost:3000/api/upload', fd)
+    this.http.post('http://localhost:3000/api/uploads', fd)
         .subscribe(res =>{
           console.log(res);
         });
