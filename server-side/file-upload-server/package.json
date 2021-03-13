@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@canvas/image": "^1.0.1",
+    "blockhash": "^0.2.0",
+    "blockhash-core": "^0.1.0",
     "config": "^3.3.6",
     "express": "^4.17.1",
     "multer": "^1.4.2"
