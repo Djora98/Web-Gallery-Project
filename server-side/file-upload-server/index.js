@@ -5,13 +5,13 @@ const multer = require('multer');
 const path = require('path');
 const helpers = require('./helpers');
 const duplicates = require('./duplicates');
-let indexing = require('./pictures-index.json');
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use(express.static('public'));
 
+let indexing = require('./pictures-index.json');
 
 // Storage for images
 const storage = multer.diskStorage({
@@ -28,29 +28,7 @@ const storage = multer.diskStorage({
     }
 });
 
-// Single picture upload
-// app.post('/api/uploads', (req, res) => {
-//     let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('picture');
-
-//     upload(req, res, function(err){
-//         if(req.fileValidationError){
-//             return res.send(req.fileValidationError);
-//         }
-//         else if (!req.file){
-//             return res.send('Please select an image to upload');
-//         }
-//         else if(err instanceof multer.MulterError){
-//             return res.send(err);
-//         }
-//         else if(err){
-//             return res.send(err);
-//         }
-
-//         res.send({ message: 'Image uploaded successfully!'});
-//     });
-// });
-
-// Multiple pictures upload
+// Multiple-Single picture upload
 app.post('/api/uploads', (req, res) => {
 
     const baseUrl = req.protocol + '://' + req.get('host') + '/' + config.get('upload_folder_path');
@@ -76,67 +54,10 @@ app.post('/api/uploads', (req, res) => {
             return res.send(err);
         }
 
-        //fs.appendFile('pictures-index.json',)
-
-        let fileName = req.files.map((file) => {
-            return helpers.newName(file.originalname);
-        });
-
-        let fileUrls = req.files.map((file) => {
-            return baseUrl + helpers.newName(file.originalname);
-        });
-
-        //console.log(fileUrls);
-        //console.log(indexing.length);
-
         // Used to delete duplicates
         setTimeout(duplicates.generateRefMap, 1000);
 
-        setTimeout(() => {
-            if (helpers.duplicateLookUp(indexing, fileName.toString())) {
-                console.log(fileName);
-            } else {
-                console.log("nije pronadjen");
-                let jsonText = {
-                    url: baseUrl + fileName.toString(),
-                    name: fileName.toString()
-                };
-                indexing[indexing.length] = jsonText;
-                fs.writeFile('pictures-index.json', JSON.stringify(indexing), (err) =>{
-                    if (err) throw err;
-                    console.log('Saved!');
-                });
-            }
-            // fs.readdir(`public/${config.get('upload_folder_path')}`, (err, files) => {
-            //     files.forEach(file => {
-            //         for(let i=0; i<indexing.length; i++){
-            //             if (helpers.duplicateLookUp(indexing, fileName.toString())) {
-            //                 console.log(fileName);
-            //                 break;
-            //             } else {
-            //                 // console.log("ne postoji");
-            //                 // let jsonText = {
-            //                 //     url: baseUrl + file,
-            //                 //     name: file
-            //                 // };
-            //                 // fs.appendFile('pictures-index.json', JSON.stringify(jsonText), (err) => {
-            //                 //     if (err) throw err;
-            //                 //     console.log('Saved!');
-            //                 // });
-            //                 // if (helpers.duplicateLookUp(indexing, file)) {
-            //                 //     console.log('Vec postoji!');
-            //                 // } else {
-            //                     // fs.appendFileSync('pictures-index.json', JSON.stringify(jsonText), (err) => {
-            //                     //     if (err) throw err;
-            //                     //     console.log('Saved!');
-            //                     // });
-
-            //                 // }
-            //             }
-            //         }
-            //     });
-            // });
-        }, 3000);
+        setTimeout(() => {helpers.newFileIndexing(indexing, req.files, baseUrl)}, 3000);
 
         // Response to client
         res.send({ message: 'Images uploaded successfully!' });
@@ -145,34 +66,26 @@ app.post('/api/uploads', (req, res) => {
 
 });
 
-app.get('/api/uploads', (req, res) => {
-    const baseUrl = req.protocol + '://' + req.get('host') + '/' + config.get('upload_folder_path');
+// Getting picture with defined name
+app.get('/api/uploads/:name', (req, res) => {
 
+    // Looking through index for picture with defined name
+    const picture = indexing.find(p => p.name === helpers.newName(req.params.name).toString());
 
-    let result = '';
-    let nameOfFiles = [];
-    let index = -1;
-    fs.readdir(`public/${config.get('upload_folder_path')}`, (err, files) => {
-        files.forEach(file => {
-            nameOfFiles[index++] = file.toString();
-            console.log(file);
-        });
-    });
-    setTimeout(() => {
-        result += baseUrl;
-        result += nameOfFiles[index - 1];
-        console.log(index.toString());
-        res.send(result);
-        console.log({ message: result });
-    }, 1000);
+    // If there is none, will get error 404
+    if (!picture) return res.status(404).send('The picture with the given name was not found.');
+    console.log(picture);
 
+    // Redirects to picture
+    res.redirect(picture.url);
 
 
 });
 
-// fs.appendFile('pictures-index.json', 'text', (err) =>{
-//     if(err) throw err;
-//     console.log('Saved!');
-// });
+// Getting list of all pictures
+app.get('/api/uploads', (req, res) => {
+    // Sending over the indexing json file
+    res.send(indexing);
+});
 
 app.listen(port, () => console.log(`App listening on port ${port}...`));
