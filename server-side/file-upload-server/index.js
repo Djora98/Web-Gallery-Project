@@ -13,13 +13,15 @@ app.use(express.static(__dirname + '/public'));
 
 // Storage for images
 const storage = multer.diskStorage({
-    
+
+    // Destination of uploaded images
     destination: (req, file, cb) => {
         cb(null, config.get('upload_folder_path'));
     },
 
+    // Naming uploaded images
     filename: (req, file, cb) => {
-        cb(null, Date.now()+ '-' + file.originalname);
+        cb(null, file.originalname);
     }
 });
 
@@ -47,25 +49,25 @@ const storage = multer.diskStorage({
 
 // Multiple pictures upload
 app.post('/api/uploads', (req, res) => {
-    
+
     // Upload of images
     let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('pictures', 10);
 
-    upload(req, res, function(err){
+    upload(req, res, function (err) {
         // Is there file validation error
-        if(req.fileValidationError){
+        if (req.fileValidationError) {
             return res.send(req.fileValidationError);
         }
         // Are there files
-        else if (!req.files){
+        else if (!req.files) {
             return res.send('Please select an image to upload');
         }
         // Is there error concerning Multer
-        else if(err instanceof multer.MulterError){
+        else if (err instanceof multer.MulterError) {
             return res.send(err);
         }
         // Any other error
-        else if(err){
+        else if (err) {
             return res.send(err);
         }
         // Used to delete duplicates
@@ -75,7 +77,7 @@ app.post('/api/uploads', (req, res) => {
         res.send({ message: 'Images uploaded successfully!'});
     });
 
-    
+
 });
 
 app.get('/api/uploads', (req, res) => {
