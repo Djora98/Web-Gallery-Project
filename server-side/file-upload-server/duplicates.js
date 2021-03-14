@@ -2,7 +2,7 @@ const fs = require('fs');
 const config = require('config');
 const blockhash = require('blockhash-core');
 const { imageFromBuffer, getImageData } = require('@canvas/image');
-const imgFolder = config.get('upload_folder_path')
+const imgFolder = './public/' + config.get('upload_folder_path')
 const refMap = new Map();
 
 // Function used to hash

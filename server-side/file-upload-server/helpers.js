@@ -8,3 +8,9 @@ const imageFilter = (req, file, cb) => {
 };
 
 exports.imageFilter = imageFilter;
+
+function newName(name) {
+    return name.replace(/\s/g, '-').toLocaleLowerCase();
+}
+
+exports.newName = newName;

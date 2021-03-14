@@ -1,4 +1,5 @@
 const config = require('config');
+const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -8,7 +9,7 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(express.static(__dirname + '/public'));
+app.use(express.static('public'));
 
 
 // Storage for images
@@ -16,12 +17,13 @@ const storage = multer.diskStorage({
 
     // Destination of uploaded images
     destination: (req, file, cb) => {
-        cb(null, config.get('upload_folder_path'));
+        cb(null, `public/${config.get('upload_folder_path')}`);
     },
 
     // Naming uploaded images
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
+        // let newName = file.originalname.replace(/\s/g, '-');
+        cb(null, helpers.newName(file.originalname));
     }
 });
 
@@ -70,6 +72,16 @@ app.post('/api/uploads', (req, res) => {
         else if (err) {
             return res.send(err);
         }
+        
+        //fs.appendFile('pictures-index.json',)
+
+        let fileNames = req.files.map((file) =>{
+            return helpers.newName(file.originalname);
+        });
+
+        console.log(fileNames);
+        //console.log(req.files.filename);
+
         // Used to delete duplicates
         setTimeout(duplicates.generateRefMap, 1000);
 
@@ -81,7 +93,27 @@ app.post('/api/uploads', (req, res) => {
 });
 
 app.get('/api/uploads', (req, res) => {
+    const baseUrl = req.protocol + '://' + req.get('host') + '/' + config.get('upload_folder_path');
+    
+    let result = '';
+    let nameOfFiles = [];
+    let index = -1;
+    fs.readdir(`public/${config.get('upload_folder_path')}`, (err, files) =>{
+        files.forEach(file =>{
+            nameOfFiles[index++] = file.toString();
+            console.log(file);
+        });
+    });
+    setTimeout(() => {
+        result += baseUrl;
+        result += nameOfFiles[index-1];
+        console.log(index.toString());
+        res.send(result);
+        console.log({message: result});
+    }, 1000);
+    
 
+    
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}...`));
