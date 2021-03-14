@@ -3,7 +3,9 @@ const config = require('config');
 const blockhash = require('blockhash-core');
 const { imageFromBuffer, getImageData } = require('@canvas/image');
 const imgFolder = config.get('upload_folder_path')
+const refMap = new Map();
 
+// Function used to hash
 async function hash(imgPath){
     try {
         const data = await readFile(imgPath);
@@ -14,6 +16,7 @@ async function hash(imgPath){
     }
 }
 
+// Function to read files
 function readFile(path){
     return new Promise((resolve, reject) => {
         fs.readFile(path, (err, data) =>{
@@ -23,6 +26,7 @@ function readFile(path){
     });
 }
 
+// Function to change from Hex to Binary
 function hexToBin(hexString){
     const hexBinLookup = {
         0: "0000",
@@ -56,6 +60,7 @@ function hexToBin(hexString){
     return result;
 }
 
+// Function to get names of files
 async function getFileNames(){
     return new Promise((resolve, reject) => {
         fs.readdir(imgFolder, (err, files) => {
@@ -65,28 +70,34 @@ async function getFileNames(){
     });
 }
 
-const refMap = new Map();
-
+// Function to generate reference map for duplicates
 async function generateRefMap(){
     const files = await getFileNames();
     for(let i=0; i< files.length; i++){
+        // hashing the image
         const imgHash = await hash(`${imgFolder}${files[i]}`);
         let valueArray;
+        // checking if there is already that hash in the map
         if(refMap.has(imgHash)){
             const existingPaths = refMap.get(imgHash);
+            // if there is, it's gonna delete the file
             fs.unlink(`${imgFolder}${files[i]}`, (err) => {
                 if(err){
                     console.error(err);
                     return;
                 }
             })
+            // but nontheless it's going to show it as a duplicate in map
             valueArray = [...existingPaths, `${imgFolder}${files[i]}`];
         } else {
+            // going to add new value as it's new hash
             valueArray = [`${imgFolder}${files[i]}`];
         }
         refMap.set(imgHash, valueArray);
     }
     console.log(refMap);
+    // clearing the map
+    refMap.clear();
 }
 
 exports.generateRefMap = generateRefMap;
