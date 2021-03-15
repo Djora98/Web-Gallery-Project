@@ -1,1 +1,18 @@
-[{"url":"http://localhost:3000/uploads/slika-1.jpg","name":"slika-1.jpg"},{"url":"http://localhost:3000/uploads/slika-2.jpg","name":"slika-2.jpg"},{"url":"http://localhost:3000/uploads/slika-3.jpg","name":"slika-3.jpg"},{"url":"http://localhost:3000/uploads/wallpaper.jpg","name":"wallpaper.jpg"}]
+[
+    {
+        "url": "http://localhost:3000/uploads/slika-1.jpg",
+        "name": "slika-1.jpg"
+    },
+    {
+        "url": "http://localhost:3000/uploads/slika-2.jpg",
+        "name": "slika-2.jpg"
+    },
+    {
+        "url": "http://localhost:3000/uploads/slika-3.jpg",
+        "name": "slika-3.jpg"
+    },
+    {
+        "url": "http://localhost:3000/uploads/wallpaper.jpg",
+        "name": "wallpaper.jpg"
+    }
+]

@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
 
-  selectedFiles: File [] = [];
+  selectedFiles: File[] = [];
 
   serverData: ServerData[];
   urlArray: Object[] = [];
@@ -19,45 +19,46 @@ export class AppComponent implements OnInit {
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
 
-  constructor(private http: HttpClient){
+  constructor(private http: HttpClient) {
 
   }
 
   title = 'file-upload';
 
-  fileChange(event){
-    for(var i =0; i< event.target.files.length; i++){
+  fileChange(event) {
+    for (var i = 0; i < event.target.files.length; i++) {
       this.selectedFiles.push(event.target.files[i]);
     }
   }
 
-  onUpload(){
+  onUpload() {
     const fd = new FormData();
-    for(var i =0; i<this.selectedFiles.length; i++){
+    for (var i = 0; i < this.selectedFiles.length; i++) {
       fd.append('pictures', this.selectedFiles[i]);
     }
     this.http.post('http://localhost:3000/api/uploads', fd)
-        .subscribe(res =>{
-          console.log(res);
-        });
+      .subscribe(res => {
+        console.log(res);
+      });
+
   }
 
-  getData(): Observable<ServerData[]>{
+  getData(): Observable<ServerData[]> {
     return this.http
-    .get<ServerData>('http://localhost:3000/api/uploads')
-    .pipe(map(response => {
-      const array = JSON.parse(JSON.stringify(response)) as any[];
-      const datas = array.map(data => new ServerData(data));
-      return datas;
-    }));
+      .get<ServerData>('http://localhost:3000/api/uploads')
+      .pipe(map(response => {
+        const array = JSON.parse(JSON.stringify(response)) as any[];
+        const datas = array.map(data => new ServerData(data));
+        return datas;
+      }));
     // used to test
     //console.log(this.datas);
   }
 
-  onDownload(){
+  onDownload() {
     this.getData().subscribe(
-      data =>{
-        for(let i=0; i<data.length; i++){
+      data => {
+        for (let i = 0; i < data.length; i++) {
           this.urlArray[i] = data[i].url;
         }
         // used to test
@@ -70,17 +71,35 @@ export class AppComponent implements OnInit {
     // used to test
     // setTimeout(() => {console.log(this.urlArray.length)}, 3000);
   }
-  
-  ngOnInit(): void{
+
+  timeout(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  updatingGallery() {
+    this.onDownload();
+    let tempArray: any[] = [];
+    for (let i = 0; i < this.urlArray.length; i++) {
+      tempArray.push({
+        small: `${this.urlArray[i]}`,
+        medium: `${this.urlArray[i]}`,
+        big: `${this.urlArray[i]}`
+      });
+    }
+    return tempArray;
+  }
+
+  ngOnInit(): void {
+    this.onDownload();
     this.galleryOptions = [
       {
         width: '600px',
         height: '400px',
         thumbnailsColumns: 4,
         imageAnimation: NgxGalleryAnimation.Slide
-    },
-    // max-width 800
-    {
+      },
+      // max-width 800
+      {
         breakpoint: 800,
         width: '100%',
         height: '600px',
@@ -88,37 +107,28 @@ export class AppComponent implements OnInit {
         thumbnailsPercent: 20,
         thumbnailsMargin: 20,
         thumbnailMargin: 20
-    },
-    // max-width 400
-    {
+      },
+      // max-width 400
+      {
         breakpoint: 400,
         preview: false
-    }
-  ];
-  setInterval(() =>{
-    this.onDownload();
-    let tempArray: any[] = [];
-    for(let i=0; i<this.urlArray.length; i++){
-      tempArray.push({ 
-        small: `${this.urlArray[i]}`,
-        medium: `${this.urlArray[i]}`,
-        big: `${this.urlArray[i]}`
-      });
-    }
-    // used to test
-    //console.log(tempArray);
-    this.galleryImages = tempArray;
-  }, 5000);
-  
+      }
+    ];
+    this.timeout(1000).then(()=>{this.galleryImages = this.updatingGallery();})
+    
+    setInterval(() => {
+      this.galleryImages = this.updatingGallery();
+    }, 20000);
+
   }
 
 }
 
-class ServerData{
+class ServerData {
   url: string;
   name: string;
 
-  constructor(data: any){
+  constructor(data: any) {
     Object.assign(this, data);
   }
 }
