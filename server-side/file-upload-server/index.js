@@ -92,6 +92,7 @@ app.get('/api/uploads/:name', (req, res) => {
 
 // Getting list of all pictures
 app.get('/api/uploads', (req, res) => {
+    
     // Sending over the indexing json file
     res.send(JSON.stringify(indexing));
 });

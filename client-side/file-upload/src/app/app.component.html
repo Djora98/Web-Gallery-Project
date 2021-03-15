@@ -14,7 +14,7 @@
           </div>
           <div class="custom-file">
             <form action="/api/upload" method="POST" enctype="multipart/form-data">
-              <input (change)="fileChange($event)" type="file" class="custom-file-input" name="pictures"
+              <input (change)="fileChange($event)" type="file" id="inputGroupFile01" class="custom-file-input" name="pictures"
                 accept="image/*" multiple>
             </form>
             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>

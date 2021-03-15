@@ -105,7 +105,8 @@ export class AppComponent implements OnInit {
         big: `${this.urlArray[i]}`
       });
     }
-    console.log(tempArray);
+    // used to test
+    //console.log(tempArray);
     this.galleryImages = tempArray;
   }, 5000);
   
