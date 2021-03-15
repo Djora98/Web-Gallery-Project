@@ -65,6 +65,7 @@ async function getFileNames(){
     return new Promise((resolve, reject) => {
         fs.readdir(imgFolder, (err, files) => {
             if(err) reject(err);
+            //console.log(files);
             resolve(files);
         });
     });
@@ -73,6 +74,8 @@ async function getFileNames(){
 // Function to generate reference map for duplicates
 async function generateRefMap(){
     const files = await getFileNames();
+    let newFileArray = [];
+    let index = 0;
     for(let i=0; i< files.length; i++){
         // hashing the image
         const imgHash = await hash(`${imgFolder}${files[i]}`);
@@ -81,23 +84,32 @@ async function generateRefMap(){
         if(refMap.has(imgHash)){
             const existingPaths = refMap.get(imgHash);
             // if there is, it's gonna delete the file
-            fs.unlink(`${imgFolder}${files[i]}`, (err) => {
+            fs.unlinkSync(`${imgFolder}${files[i]}`, (err) => {
                 if(err){
                     console.error(err);
                     return;
                 }
+                console.log('Obrisan duplikat');
             })
+            
             // but nontheless it's going to show it as a duplicate in map
             valueArray = [...existingPaths, `${imgFolder}${files[i]}`];
         } else {
             // going to add new value as it's new hash
             valueArray = [`${imgFolder}${files[i]}`];
+            newFileArray[index++] = files[i];
+            //console.log(newFileArray); 
         }
         refMap.set(imgHash, valueArray);
     }
     console.log(refMap);
+    //console.log(newFileArray);
     // clearing the map
     refMap.clear();
+
+    return new Promise((resolve, reject) => {
+        resolve(newFileArray);
+    });
 }
 
 exports.generateRefMap = generateRefMap;

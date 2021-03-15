@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 let indexing = require('./pictures-index.json');
+let files = [];
 
 // Storage for images
 const storage = multer.diskStorage({
@@ -54,10 +55,14 @@ app.post('/api/uploads', (req, res) => {
             return res.send(err);
         }
 
-        // Used to delete duplicates
-        setTimeout(duplicates.generateRefMap, 1000);
+        
 
-        setTimeout(() => {helpers.newFileIndexing(indexing, req.files, baseUrl)}, 3000);
+        // Used to delete duplicates and index
+        setTimeout(async function() { 
+            await duplicates.generateRefMap().then(value => {files = value;});
+            console.log(files);
+            helpers.newFileIndexing(indexing, files, baseUrl);
+        }, 2000);
 
         // Response to client
         res.send({ message: 'Images uploaded successfully!' });
@@ -85,7 +90,8 @@ app.get('/api/uploads/:name', (req, res) => {
 // Getting list of all pictures
 app.get('/api/uploads', (req, res) => {
     // Sending over the indexing json file
-    res.send(indexing);
+    res.send(JSON.stringify(indexing));
 });
 
+console.log(JSON.stringify(indexing));
 app.listen(port, () => console.log(`App listening on port ${port}...`));

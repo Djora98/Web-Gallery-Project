@@ -1,26 +1,38 @@
 <div class="mainContainer">
   <div class="content">
     <div class="header">
-        <h1>File Upload</h1>
+      <h1>File Upload</h1>
     </div>
     <div class="row margin25">
-      <div class="col-md-4">
+      <div class="col-md-2">
 
       </div>
-      <div class="col-md-4">
+      <div class="col-md-8">
         <div class="input-group">
           <div class="input-group-prepend">
             <button (click)="onUpload()" id="btnUpload">Upload</button>
           </div>
           <div class="custom-file">
             <form action="/api/upload" method="POST" enctype="multipart/form-data">
-              <input (change)="fileChange($event)" type="file" class="custom-file-input" name="picture" accept="image/*">
+              <input (change)="fileChange($event)" type="file" class="custom-file-input" name="pictures"
+                accept="image/*" multiple>
             </form>
             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-2">
+
+      </div>
+    </div>
+    <div class="row margin25">
+      <div class="col-md-2">
+
+      </div>
+      <div class="col-md-8">
+          <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+      </div>
+      <div class="col-md-2">
 
       </div>
     </div>

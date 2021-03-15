@@ -33,17 +33,16 @@ exports.duplicateLookUp = duplicateLookUp;
 function newFileIndexing(indexing, files, baseUrl) {
     // Checking every uploaded file for their name and looking in picutres-index.json if there is same
     files.forEach(file => {
-        let fileName = newName(file.originalname);
-        if (duplicateLookUp(indexing, fileName.toString())) {
+        if (duplicateLookUp(indexing, file.toString())) {
             // If there is nothing will be done
-            console.log(fileName.toString());
+            console.log(file.toString());
         } else {
             // If there isn't new object will be added to an existing array of json objects
             console.log("nije pronadjen");
             // Defining new json object
             let jsonText = {
-                url: baseUrl + fileName.toString(),
-                name: fileName.toString()
+                url: baseUrl + file.toString(),
+                name: file.toString()
             };
             // Adding new json object in index
             indexing[indexing.length] = jsonText;
