@@ -20,7 +20,8 @@ exports.newName = newName;
 
 function duplicateLookUp(jsonObject, comparingObject) {
     let res = jsonObject.filter(it => it.name === comparingObject);
-    //console.log(res);
+    // used to test
+    // console.log(res);
     // console.log(jsonObject);
     // console.log(comparingObject);
     // console.log(res.length);
@@ -35,10 +36,12 @@ function newFileIndexing(indexing, files, baseUrl) {
     files.forEach(file => {
         if (duplicateLookUp(indexing, file.toString())) {
             // If there is nothing will be done
-            console.log(file.toString());
+            // used to test
+            // console.log(file.toString());
         } else {
             // If there isn't new object will be added to an existing array of json objects
-            console.log("nije pronadjen");
+            // used to test
+            // console.log("nije pronadjen");
             // Defining new json object
             let jsonText = {
                 url: baseUrl + file.toString(),
@@ -50,7 +53,8 @@ function newFileIndexing(indexing, files, baseUrl) {
             // Writing new index again
             fs.writeFile('pictures-index.json', JSON.stringify(indexing), (err) => {
                 if (err) throw err;
-                console.log('Saved!');
+                // used to test
+                // console.log('Saved!');
             });
         }
     });

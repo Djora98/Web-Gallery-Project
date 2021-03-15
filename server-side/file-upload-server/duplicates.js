@@ -89,7 +89,8 @@ async function generateRefMap(){
                     console.error(err);
                     return;
                 }
-                console.log('Obrisan duplikat');
+                // used to test
+                // console.log('Obrisan duplikat');
             })
             
             // but nontheless it's going to show it as a duplicate in map
@@ -102,8 +103,9 @@ async function generateRefMap(){
         }
         refMap.set(imgHash, valueArray);
     }
-    console.log(refMap);
-    //console.log(newFileArray);
+    // used to test
+    // console.log(refMap);
+    // console.log(newFileArray);
     // clearing the map
     refMap.clear();
 

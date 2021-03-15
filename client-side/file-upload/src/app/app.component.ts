@@ -50,6 +50,7 @@ export class AppComponent implements OnInit {
       const datas = array.map(data => new ServerData(data));
       return datas;
     }));
+    // used to test
     //console.log(this.datas);
   }
 
@@ -59,17 +60,18 @@ export class AppComponent implements OnInit {
         for(let i=0; i<data.length; i++){
           this.urlArray[i] = data[i].url;
         }
-        console.log(this.urlArray.toString());
+        // used to test
+        // console.log(this.urlArray.toString());
       },
       error => {
         console.log(error);
       }
     );
-    setTimeout(() => {console.log(this.urlArray.length)}, 3000);
+    // used to test
+    // setTimeout(() => {console.log(this.urlArray.length)}, 3000);
   }
   
   ngOnInit(): void{
-    //console.log(this.serverData);
     this.galleryOptions = [
       {
         width: '600px',
@@ -105,24 +107,6 @@ export class AppComponent implements OnInit {
     }
     console.log(tempArray);
     this.galleryImages = tempArray;
-    // this.galleryImages = [
-    //   {
-    //     small: `${this.urlArray[0]}`,
-    //     medium: `${this.urlArray[0]}`,
-    //     big: `${this.urlArray[0]}`
-    //   },
-    //   {
-    //     small: `${this.urlArray[1]}`,
-    //     medium: `${this.urlArray[1]}`,
-    //     big: `${this.urlArray[1]}`
-    //   },
-    //   {
-    //     small: `${this.urlArray[2]}`,
-    //     medium: `${this.urlArray[2]}`,
-    //     big: `${this.urlArray[2]}`
-    //   }
-    // ]
-    //console.log('test');
   }, 5000);
   
   }

@@ -60,7 +60,8 @@ app.post('/api/uploads', (req, res) => {
         // Used to delete duplicates and index
         setTimeout(async function() { 
             await duplicates.generateRefMap().then(value => {files = value;});
-            console.log(files);
+            // used to test
+            // console.log(files);
             helpers.newFileIndexing(indexing, files, baseUrl);
         }, 2000);
 
@@ -79,7 +80,9 @@ app.get('/api/uploads/:name', (req, res) => {
 
     // If there is none, will get error 404
     if (!picture) return res.status(404).send('The picture with the given name was not found.');
-    console.log(picture);
+    
+    // used to test
+    // console.log(picture);
 
     // Redirects to picture
     res.redirect(picture.url);
@@ -93,5 +96,6 @@ app.get('/api/uploads', (req, res) => {
     res.send(JSON.stringify(indexing));
 });
 
-console.log(JSON.stringify(indexing));
+// used to test
+// console.log(JSON.stringify(indexing));
 app.listen(port, () => console.log(`App listening on port ${port}...`));
